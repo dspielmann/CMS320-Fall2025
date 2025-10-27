@@ -3,14 +3,14 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Speed Settings")]
-    public float baseSpeed = 2f;
-    public float rhythmBoost = 1f;
-    public float maxSpeed = 8f;
-    public float slowPenalty = 1.5f;
-    public float rhythmWindow = 1f; // seconds between alternating keys
+    public float baseSpeed = 0f;       // no movement when idle
+    public float rhythmBoost = 2f;     // how much speed to add on a good rhythm
+    public float maxSpeed = 8f;        // clamp the top speed
+    public float slowPenalty = 1.5f;   // reduce speed when out of rhythm
+    public float rhythmWindow = 1f;    // time between alternating key presses
 
     private Rigidbody2D rb;
-    private float currentSpeed;
+    private float currentSpeed = 0f;
     private float lastKeyTime = -10f;
     private KeyCode lastKey = KeyCode.None;
     private bool isDucking = false;
@@ -18,23 +18,22 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        currentSpeed = baseSpeed;
     }
 
     void Update()
     {
-        // Ducking logic — temporarily ignore rhythm input
+        // --- Ducking ---
         if (Input.GetKey(KeyCode.DownArrow))
         {
             isDucking = true;
-            return; // don't process rhythm while ducking
+            return;
         }
         else
         {
             isDucking = false;
         }
 
-        // Rhythm-based swimming movement
+        // --- Rhythm movement ---
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             KeyCode currentKey = Input.GetKeyDown(KeyCode.LeftArrow) ? KeyCode.LeftArrow : KeyCode.RightArrow;
@@ -42,28 +41,33 @@ public class PlayerMovement : MonoBehaviour
 
             if (currentKey != lastKey && timeSinceLast <= rhythmWindow)
             {
-                // Good rhythm — speed up
+                // Good rhythm — increase speed
                 currentSpeed += rhythmBoost;
-                if (currentSpeed > maxSpeed)
-                    currentSpeed = maxSpeed;
+                currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
             }
             else
             {
                 // Bad rhythm or same key twice — slow down
                 currentSpeed -= slowPenalty;
-                if (currentSpeed < baseSpeed)
-                    currentSpeed = baseSpeed;
+                if (currentSpeed < 0f) currentSpeed = 0f;
             }
 
             lastKey = currentKey;
             lastKeyTime = Time.time;
         }
+
+        // Natural slow decay over time (so player eventually slows if idle)
+        if (currentSpeed > 0f)
+        {
+            currentSpeed -= Time.deltaTime * 0.5f;
+            if (currentSpeed < 0f) currentSpeed = 0f;
+        }
     }
 
     void FixedUpdate()
     {
-        // Constant forward motion
-        rb.linearVelocity = new Vector2(currentSpeed, 0);
+        // Only move when speed > 0
+        rb.linearVelocity = new Vector2(currentSpeed, 0f);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -72,8 +76,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!isDucking)
             {
-                // Hit an obstacle — slow down
-                currentSpeed = baseSpeed;
+                currentSpeed = 0f;
                 Debug.Log("Hit obstacle! Slowed down!");
             }
             else
