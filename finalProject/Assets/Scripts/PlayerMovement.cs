@@ -75,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
     // ------------------------------
     private void HandleRhythmInput()
     {
-        // ✅ allow rhythm taps even while diving
+        //allow rhythm taps even while diving
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             KeyCode currentKey = Input.GetKeyDown(KeyCode.LeftArrow) ? KeyCode.LeftArrow : KeyCode.RightArrow;
@@ -83,13 +83,13 @@ public class PlayerMovement : MonoBehaviour
 
             if (currentKey != lastKey && timeSinceLast >= minRhythmTime && timeSinceLast <= maxRhythmTime)
             {
-                // ✅ Good timing
+                //Good timing
                 currentSpeed += goodRhythmBoost;
                 currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
             }
             else
             {
-                // ❌ Bad timing or same key twice
+                // Bad timing or same key twice
                 currentSpeed -= badRhythmPenalty;
                 if (currentSpeed < 0f) currentSpeed = 0f;
             }
@@ -121,19 +121,19 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!isDiving)
             {
-                // 💥 Hit obstacle = lose speed
+                //Hit obstacle = lose speed
                 currentSpeed = Mathf.Max(currentSpeed - 3f, 0f);
-                Debug.Log("💥 Hit obstacle! Slowed down!");
+                Debug.Log("Hit obstacle! Slowed down!");
             }
             else
             {
-                Debug.Log("✅ Dove under obstacle safely!");
+                Debug.Log("Dove under obstacle safely!");
             }
         }
 
         if (other.CompareTag("Finish"))
         {
-            Debug.Log("🏁 You win!");
+            Debug.Log("You win!");
             rb.linearVelocity = Vector2.zero;
             currentSpeed = 0;
         }
@@ -150,5 +150,18 @@ public class PlayerMovement : MonoBehaviour
     public float GetLastKeyTime()
     {
         return lastKeyTime;
+    }
+
+    public void SetSpeed(float newSpeed)
+    {
+        currentSpeed = Mathf.Clamp(newSpeed, 0f, maxSpeed);
+    }
+
+    // ------------------------------
+    // HELPERS
+    // ------------------------------
+    public void ResetRhythmTimer()
+    {
+        lastKeyTime = Time.time; // reset rhythm tracking so bar starts empty
     }
 }
