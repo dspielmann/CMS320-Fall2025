@@ -52,10 +52,10 @@ public class RaceStartManager : MonoBehaviour
             yield return new WaitForSeconds(countInterval);
         }
 
-        // Allow diving as soon as "START!" shows
+        // Show START! and allow diving
         countdownText.text = "START!";
         canDive = true;
-        isCountdownRunning = false;  // countdown is done
+        isCountdownRunning = false;
 
         yield return new WaitForSeconds(0.75f);
         countdownText.text = "";
@@ -137,11 +137,14 @@ public class RaceStartManager : MonoBehaviour
         }
 
         // Give the player initial dive speed
-        player.SetSpeed(5f);
+        player.SetSpeed(2f);
 
-        //Reset rhythm timer so UI starts empty
+        // Reset rhythm timer so bar starts empty
         player.ResetRhythmTimer();
 
-        Debug.Log("Dive Start!");
+        // Underwater kick phase for 2 seconds
+        player.StartUnderwaterKickPhase(2f);
+
+        Debug.Log("Dive Start + Underwater Kicks!");
     }
 }

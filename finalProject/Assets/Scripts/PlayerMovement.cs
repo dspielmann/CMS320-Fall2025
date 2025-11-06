@@ -1,12 +1,13 @@
 using UnityEngine;
+using System.Collections; // ✅ Needed for IEnumerator
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Speed Settings")]
     public float baseSpeed = 0f;
-    public float goodRhythmBoost = 2f;
-    public float badRhythmPenalty = 1f;
-    public float maxSpeed = 8f;
+    public float goodRhythmBoost = 1.2f;
+    public float badRhythmPenalty = 0.6f;
+    public float maxSpeed = 4f;
     public float slowDecay = 2f;
 
     [Header("Rhythm Settings")]
@@ -24,6 +25,10 @@ public class PlayerMovement : MonoBehaviour
     private float currentSpeed = 0f;
     private float lastKeyTime = -10f;
     private KeyCode lastKey = KeyCode.None;
+
+    // Underwater kick phase
+    private bool isUnderwaterKickPhase = false;
+    private float underwaterKickEndTime = 0f;
 
     void Start()
     {
@@ -53,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
             isDiving = true;
             diveTimer = diveDuration;
 
-            // TEMP visual dive feedback (for now)
             transform.position = new Vector3(transform.position.x, startPosition.y + diveDepth, transform.position.z);
             Debug.Log("Diving under obstacle!");
         }
@@ -75,23 +79,30 @@ public class PlayerMovement : MonoBehaviour
     // ------------------------------
     private void HandleRhythmInput()
     {
-        //allow rhythm taps even while diving
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             KeyCode currentKey = Input.GetKeyDown(KeyCode.LeftArrow) ? KeyCode.LeftArrow : KeyCode.RightArrow;
             float timeSinceLast = Time.time - lastKeyTime;
 
-            if (currentKey != lastKey && timeSinceLast >= minRhythmTime && timeSinceLast <= maxRhythmTime)
+            if (isUnderwaterKickPhase)
             {
-                //Good timing
-                currentSpeed += goodRhythmBoost;
+                // During underwater phase: just boost slightly with each press
+                currentSpeed += 0.1f;
                 currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
             }
             else
             {
-                // Bad timing or same key twice
-                currentSpeed -= badRhythmPenalty;
-                if (currentSpeed < 0f) currentSpeed = 0f;
+                // Normal rhythm timing check
+                if (currentKey != lastKey && timeSinceLast >= minRhythmTime && timeSinceLast <= maxRhythmTime)
+                {
+                    currentSpeed += goodRhythmBoost;
+                    currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+                }
+                else
+                {
+                    currentSpeed -= badRhythmPenalty;
+                    if (currentSpeed < 0f) currentSpeed = 0f;
+                }
             }
 
             lastKey = currentKey;
@@ -104,7 +115,6 @@ public class PlayerMovement : MonoBehaviour
     // ------------------------------
     private void ApplyNaturalSlowdown()
     {
-        // lose speed if idle too long
         if (Time.time - lastKeyTime > maxRhythmTime)
         {
             currentSpeed -= slowDecay * Time.deltaTime;
@@ -121,7 +131,6 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!isDiving)
             {
-                //Hit obstacle = lose speed
                 currentSpeed = Mathf.Max(currentSpeed - 3f, 0f);
                 Debug.Log("Hit obstacle! Slowed down!");
             }
@@ -140,7 +149,29 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // ------------------------------
-    // UI GETTERS
+    // UNDERWATER KICK PHASE
+    // ------------------------------
+    public void StartUnderwaterKickPhase(float duration)
+    {
+        StartCoroutine(UnderwaterKickRoutine(duration));
+    }
+
+    private IEnumerator UnderwaterKickRoutine(float duration)
+    {
+        isUnderwaterKickPhase = true;
+        underwaterKickEndTime = Time.time + duration;
+
+        while (Time.time < underwaterKickEndTime)
+        {
+            yield return null;
+        }
+
+        isUnderwaterKickPhase = false;
+        Debug.Log("Underwater phase ended — switching to surface swimming.");
+    }
+
+    // ------------------------------
+    // UI GETTERS / HELPERS
     // ------------------------------
     public float GetCurrentSpeed()
     {
@@ -157,11 +188,8 @@ public class PlayerMovement : MonoBehaviour
         currentSpeed = Mathf.Clamp(newSpeed, 0f, maxSpeed);
     }
 
-    // ------------------------------
-    // HELPERS
-    // ------------------------------
     public void ResetRhythmTimer()
     {
-        lastKeyTime = Time.time; // reset rhythm tracking so bar starts empty
+        lastKeyTime = Time.time;
     }
 }
