@@ -760,10 +760,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1de041846c36a643b1fdf0fa104f80e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::RaceStartManager
   player: {fileID: 1231453583}
   countdownText: {fileID: 1518833445}
-  divingBlock: {fileID: 1863979478}
+  divingBlock: {fileID: 0}
   rhythmBar: {fileID: 1840029069}
   preDelay: 1
   countInterval: 1
@@ -946,7 +946,7 @@ MonoBehaviour:
   slowDecay: 2
   minRhythmTime: 0.75
   maxRhythmTime: 1.25
-  diveDuration: 1
+  diveDuration: 1.5
   diveDepth: -0.5
 --- !u!61 &1231453584
 BoxCollider2D:
