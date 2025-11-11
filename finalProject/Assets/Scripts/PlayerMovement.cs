@@ -79,30 +79,34 @@ public class PlayerMovement : MonoBehaviour
     // ------------------------------
     private void HandleRhythmInput()
     {
+        // --- Underwater phase: SPACEBAR spamming ---
+        if (isUnderwaterKickPhase)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                currentSpeed += 0.1f;
+                currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+                lastKeyTime = Time.time;
+                Debug.Log("Underwater kick!");
+            }
+            return; // Skip surface rhythm logic
+        }
+
+        // --- Normal surface swimming rhythm (Left/Right) ---
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             KeyCode currentKey = Input.GetKeyDown(KeyCode.LeftArrow) ? KeyCode.LeftArrow : KeyCode.RightArrow;
             float timeSinceLast = Time.time - lastKeyTime;
 
-            if (isUnderwaterKickPhase)
+            if (currentKey != lastKey && timeSinceLast >= minRhythmTime && timeSinceLast <= maxRhythmTime)
             {
-                // During underwater phase: just boost slightly with each press
-                currentSpeed += 0.1f;
+                currentSpeed += goodRhythmBoost;
                 currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
             }
             else
             {
-                // Normal rhythm timing check
-                if (currentKey != lastKey && timeSinceLast >= minRhythmTime && timeSinceLast <= maxRhythmTime)
-                {
-                    currentSpeed += goodRhythmBoost;
-                    currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
-                }
-                else
-                {
-                    currentSpeed -= badRhythmPenalty;
-                    if (currentSpeed < 0f) currentSpeed = 0f;
-                }
+                currentSpeed -= badRhythmPenalty;
+                if (currentSpeed < 0f) currentSpeed = 0f;
             }
 
             lastKey = currentKey;
