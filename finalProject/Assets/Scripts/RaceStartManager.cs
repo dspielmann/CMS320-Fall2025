@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
@@ -10,6 +11,9 @@ public class RaceStartManager : MonoBehaviour
     public GameObject divingBlock;         
     public GameObject rhythmBar;           
 
+    [Header("Timer UI")]
+    public TextMeshProUGUI raceTimerText; // 🕒 Drag your RaceTimerText here
+
     [Header("Timing Settings")]
     public float preDelay = 1f;
     public float countInterval = 1f;
@@ -19,6 +23,10 @@ public class RaceStartManager : MonoBehaviour
     private bool raceStarted = false;
     private bool isCountdownRunning = false;
     private Coroutine countdownRoutine;
+
+    // 🕒 Timer vars
+    private float raceStartTime = 0f;
+    private bool raceTimerRunning = false;
 
     void Start()
     {
@@ -43,6 +51,9 @@ public class RaceStartManager : MonoBehaviour
         if (rhythmBar != null)
             rhythmBar.SetActive(false);
 
+        if (raceTimerText != null)
+            raceTimerText.text = "00.00"; // reset timer display
+
         countdownText.text = "";
         yield return new WaitForSeconds(preDelay);
 
@@ -57,12 +68,23 @@ public class RaceStartManager : MonoBehaviour
         canDive = true;
         isCountdownRunning = false;
 
+        // 🕒 Start the race timer RIGHT HERE
+        raceStartTime = Time.time;
+        raceTimerRunning = true;
+
         yield return new WaitForSeconds(0.75f);
         countdownText.text = "";
     }
 
     void Update()
     {
+        // 🕒 Update timer display while race is active
+        if (raceTimerRunning && raceTimerText != null)
+        {
+            float elapsed = Time.time - raceStartTime;
+            raceTimerText.text = $"{elapsed:F2}";
+        }
+
         // FALSE START (only if countdown still running)
         if (isCountdownRunning && Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -119,7 +141,7 @@ public class RaceStartManager : MonoBehaviour
         if (rhythmBar != null)
         {
             rhythmBar.SetActive(true);
-            yield return null; // ensure UI updates
+            yield return null;
 
             var slider = rhythmBar.GetComponent<UnityEngine.UI.Slider>();
             if (slider != null)
@@ -128,7 +150,6 @@ public class RaceStartManager : MonoBehaviour
                 slider.maxValue = 1f;
                 slider.value = 0f;
                 slider.normalizedValue = 0f;
-                Debug.Log("Rhythm bar reset to empty.");
             }
             else
             {
@@ -146,5 +167,22 @@ public class RaceStartManager : MonoBehaviour
         player.StartUnderwaterKickPhase(2f);
 
         Debug.Log("Dive Start + Underwater Kicks!");
+    }
+
+    // 🏁 Call this from PlayerMovement when finish line is crossed
+    public void StopRaceTimer()
+    {
+        if (raceTimerRunning)
+        {
+            raceTimerRunning = false;
+
+            float finalTime = Time.time - raceStartTime;
+            if (raceTimerText != null)
+            {
+                raceTimerText.text = $"Final Time: {finalTime:F2}s";
+            }
+
+            Debug.Log($"Race finished! Final time: {finalTime:F2}s");
+        }
     }
 }

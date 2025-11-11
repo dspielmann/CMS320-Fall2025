@@ -34,9 +34,11 @@ public class PlayerMovement : MonoBehaviour
     [Header("UI References")]
     public TextMeshProUGUI underwaterTimerText; // ✅ Assign in Inspector
 
-    // ---------------------------------------------------------
-    // AWAKE - runs even if the script is disabled at start
-    // ---------------------------------------------------------
+    [Header("Underwater Timer Colors")]
+    public Color fullTimeColor = Color.green;
+    public Color midTimeColor = Color.yellow;
+    public Color lowTimeColor = Color.red;
+
     void Awake()
     {
         // Always make sure the underwater timer starts hidden
@@ -158,12 +160,33 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+
         if (other.CompareTag("Finish"))
         {
             Debug.Log("You win!");
+
             rb.linearVelocity = Vector2.zero;
-            currentSpeed = 0;
+            currentSpeed = 0f;
+            this.enabled = false;
+
+            var uiText = GameObject.Find("CountdownText");
+            if (uiText != null)
+            {
+                var tmp = uiText.GetComponent<TMPro.TextMeshProUGUI>();
+                if (tmp != null)
+                    tmp.text = "FINISH!";
+            }
+
+            // Stop the race timer
+            RaceStartManager raceManager = Object.FindFirstObjectByType<RaceStartManager>();
+            if (raceManager != null)
+            {
+                raceManager.StopRaceTimer();
+            }
         }
+
+
+
     }
 
     // ------------------------------
@@ -189,7 +212,18 @@ public class PlayerMovement : MonoBehaviour
             float remaining = underwaterKickEndTime - Time.time;
 
             if (underwaterTimerText != null)
+            {
                 underwaterTimerText.text = $"Underwater: {remaining:F1}s";
+
+                // 🔥 New: Color transition logic
+                float t = remaining / duration;
+                if (t > 0.6f)
+                    underwaterTimerText.color = fullTimeColor;  // Green
+                else if (t > 0.3f)
+                    underwaterTimerText.color = midTimeColor;   // Yellow
+                else
+                    underwaterTimerText.color = lowTimeColor;   // Red
+            }
 
             yield return null;
         }
