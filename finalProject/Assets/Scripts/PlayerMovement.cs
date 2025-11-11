@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections; // ✅ Needed for IEnumerator
+using System.Collections;
+using TMPro; // ✅ Needed for UI text
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -29,6 +30,19 @@ public class PlayerMovement : MonoBehaviour
     // Underwater kick phase
     private bool isUnderwaterKickPhase = false;
     private float underwaterKickEndTime = 0f;
+
+    [Header("UI References")]
+    public TextMeshProUGUI underwaterTimerText; // ✅ Assign in Inspector
+
+    // ---------------------------------------------------------
+    // AWAKE - runs even if the script is disabled at start
+    // ---------------------------------------------------------
+    void Awake()
+    {
+        // Always make sure the underwater timer starts hidden
+        if (underwaterTimerText != null)
+            underwaterTimerText.gameObject.SetActive(false);
+    }
 
     void Start()
     {
@@ -165,12 +179,26 @@ public class PlayerMovement : MonoBehaviour
         isUnderwaterKickPhase = true;
         underwaterKickEndTime = Time.time + duration;
 
+        if (underwaterTimerText != null)
+        {
+            underwaterTimerText.gameObject.SetActive(true);
+        }
+
         while (Time.time < underwaterKickEndTime)
         {
+            float remaining = underwaterKickEndTime - Time.time;
+
+            if (underwaterTimerText != null)
+                underwaterTimerText.text = $"Underwater: {remaining:F1}s";
+
             yield return null;
         }
 
         isUnderwaterKickPhase = false;
+
+        if (underwaterTimerText != null)
+            underwaterTimerText.gameObject.SetActive(false);
+
         Debug.Log("Underwater phase ended — switching to surface swimming.");
     }
 
