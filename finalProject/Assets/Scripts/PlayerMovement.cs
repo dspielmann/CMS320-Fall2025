@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using TMPro; // ✅ Needed for UI text
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -18,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dive Settings")]
     public float diveDuration = 1.5f;
     public float diveDepth = -0.5f;
+
     private bool isDiving = false;
     private float diveTimer = 0f;
     private Vector3 startPosition;
@@ -32,16 +33,21 @@ public class PlayerMovement : MonoBehaviour
     private float underwaterKickEndTime = 0f;
 
     [Header("UI References")]
-    public TextMeshProUGUI underwaterTimerText; // ✅ Assign in Inspector
+    public TextMeshProUGUI underwaterTimerText;
 
     [Header("Underwater Timer Colors")]
     public Color fullTimeColor = Color.green;
     public Color midTimeColor = Color.yellow;
     public Color lowTimeColor = Color.red;
 
+    // -------------------------------
+    // Tutorial Mode Flag
+    // -------------------------------
+    [Header("Tutorial Mode")]
+    public bool tutorialMode = false;
+
     void Awake()
     {
-        // Always make sure the underwater timer starts hidden
         if (underwaterTimerText != null)
             underwaterTimerText.gameObject.SetActive(false);
     }
@@ -54,8 +60,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        HandleDiveInput();
-        HandleRhythmInput();
+        // ---------------------------------------------------
+        // Block swimming/rhythm/underwater if in tutorial
+        // ---------------------------------------------------
+        if (!tutorialMode)
+        {
+            HandleDiveInput();
+            HandleRhythmInput();
+        }
+
+        // Slowdown works in all modes
         ApplyNaturalSlowdown();
     }
 
@@ -65,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // ------------------------------
-    // DIVE / DUCKING SYSTEM
+    // DIVE INPUT
     // ------------------------------
     private void HandleDiveInput()
     {
@@ -91,11 +105,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // ------------------------------
-    // RHYTHM MOVEMENT SYSTEM
+    // RHYTHM INPUT
     // ------------------------------
     private void HandleRhythmInput()
     {
-        // --- Underwater phase: SPACEBAR spamming ---
         if (isUnderwaterKickPhase)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -105,10 +118,9 @@ public class PlayerMovement : MonoBehaviour
                 lastKeyTime = Time.time;
                 Debug.Log("Underwater kick!");
             }
-            return; // Skip surface rhythm logic
+            return;
         }
 
-        // --- Normal surface swimming rhythm (Left/Right) ---
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             KeyCode currentKey = Input.GetKeyDown(KeyCode.LeftArrow) ? KeyCode.LeftArrow : KeyCode.RightArrow;
@@ -160,11 +172,9 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-
         if (other.CompareTag("Finish"))
         {
             Debug.Log("You win!");
-
             rb.linearVelocity = Vector2.zero;
             currentSpeed = 0f;
             this.enabled = false;
@@ -172,21 +182,17 @@ public class PlayerMovement : MonoBehaviour
             var uiText = GameObject.Find("CountdownText");
             if (uiText != null)
             {
-                var tmp = uiText.GetComponent<TMPro.TextMeshProUGUI>();
+                var tmp = uiText.GetComponent<TextMeshProUGUI>();
                 if (tmp != null)
                     tmp.text = "FINISH!";
             }
 
-            // Stop the race timer
             RaceStartManager raceManager = Object.FindFirstObjectByType<RaceStartManager>();
             if (raceManager != null)
             {
                 raceManager.StopRaceTimer();
             }
         }
-
-
-
     }
 
     // ------------------------------
@@ -203,9 +209,7 @@ public class PlayerMovement : MonoBehaviour
         underwaterKickEndTime = Time.time + duration;
 
         if (underwaterTimerText != null)
-        {
             underwaterTimerText.gameObject.SetActive(true);
-        }
 
         while (Time.time < underwaterKickEndTime)
         {
@@ -215,21 +219,19 @@ public class PlayerMovement : MonoBehaviour
             {
                 underwaterTimerText.text = $"Underwater: {remaining:F1}s";
 
-                // 🔥 New: Color transition logic
                 float t = remaining / duration;
                 if (t > 0.6f)
-                    underwaterTimerText.color = fullTimeColor;  // Green
+                    underwaterTimerText.color = fullTimeColor;
                 else if (t > 0.3f)
-                    underwaterTimerText.color = midTimeColor;   // Yellow
+                    underwaterTimerText.color = midTimeColor;
                 else
-                    underwaterTimerText.color = lowTimeColor;   // Red
+                    underwaterTimerText.color = lowTimeColor;
             }
 
             yield return null;
         }
 
         isUnderwaterKickPhase = false;
-
         if (underwaterTimerText != null)
             underwaterTimerText.gameObject.SetActive(false);
 
@@ -237,25 +239,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // ------------------------------
-    // UI GETTERS / HELPERS
+    // HELPERS
     // ------------------------------
-    public float GetCurrentSpeed()
-    {
-        return currentSpeed;
-    }
-
-    public float GetLastKeyTime()
-    {
-        return lastKeyTime;
-    }
-
-    public void SetSpeed(float newSpeed)
-    {
-        currentSpeed = Mathf.Clamp(newSpeed, 0f, maxSpeed);
-    }
-
-    public void ResetRhythmTimer()
-    {
-        lastKeyTime = Time.time;
-    }
+    public float GetCurrentSpeed() => currentSpeed;
+    public float GetLastKeyTime() => lastKeyTime;
+    public void SetSpeed(float newSpeed) => currentSpeed = Mathf.Clamp(newSpeed, 0f, maxSpeed);
+    public void ResetRhythmTimer() => lastKeyTime = Time.time;
 }
