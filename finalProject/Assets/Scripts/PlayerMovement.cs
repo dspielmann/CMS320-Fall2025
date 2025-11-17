@@ -46,6 +46,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Tutorial Mode")]
     public bool tutorialMode = false;
 
+    [Header("Audio")]
+    AudioManager AudioManager;
+
     void Awake()
     {
         if (underwaterTimerText != null)
@@ -56,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         startPosition = transform.position;
+        AudioManager = GameObject.FindGameObjectWithTag("music").GetComponent<AudioManager>();
     }
 
     void Update()
@@ -117,6 +121,7 @@ public class PlayerMovement : MonoBehaviour
                 currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
                 lastKeyTime = Time.time;
                 Debug.Log("Underwater kick!");
+                AudioManager.PlaySplashSXF(AudioManager.splashSound);
             }
             return;
         }
@@ -130,11 +135,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 currentSpeed += goodRhythmBoost;
                 currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+                AudioManager.PlaySplashSXF(AudioManager.splashSound);
             }
             else
             {
                 currentSpeed -= badRhythmPenalty;
                 if (currentSpeed < 0f) currentSpeed = 0f;
+                AudioManager.PlayMissSXF(AudioManager.missedSound);
             }
 
             lastKey = currentKey;
