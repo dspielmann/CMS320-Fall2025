@@ -6,13 +6,13 @@ using System.Collections;
 public class RaceStartManager : MonoBehaviour
 {
     [Header("References")]
-    public PlayerMovement player;          
-    public TextMeshProUGUI countdownText;  
-    public GameObject divingBlock;         
-    public GameObject rhythmBar;           
+    public PlayerMovement player;
+    public TextMeshProUGUI countdownText;
+    public GameObject divingBlock;
+    public GameObject rhythmBar;
 
     [Header("Timer UI")]
-    public TextMeshProUGUI raceTimerText; // 🕒 Drag your RaceTimerText here
+    public TextMeshProUGUI raceTimerText;
 
     [Header("Timing Settings")]
     public float preDelay = 1f;
@@ -24,15 +24,68 @@ public class RaceStartManager : MonoBehaviour
     private bool isCountdownRunning = false;
     private Coroutine countdownRoutine;
 
-    // 🕒 Timer vars
+    // Timer vars
     private float raceStartTime = 0f;
     private bool raceTimerRunning = false;
 
+    // -------------------------------
+    // TUTORIAL MODE
+    // -------------------------------
+    [Header("Tutorial Mode")]
+    public bool tutorialMode = false;
+    public TextMeshProUGUI tutorialText;
+
     void Start()
     {
+        if (tutorialMode)
+        {
+            StartCoroutine(TutorialSequence());
+        }
+        else
+        {
+            StartCountdown();
+        }
+    }
+
+    // -----------------------------------------------------------
+    // TUTORIAL SEQUENCE
+    // -----------------------------------------------------------
+    private IEnumerator TutorialSequence()
+    {
+        player.enabled = false;
+        countdownText.text = "";
+        if (raceTimerText != null) raceTimerText.text = "00.00";
+
+        // Hide rhythm bar during tutorial
+        if (rhythmBar != null)
+            rhythmBar.SetActive(false);
+
+        // 1) “Let's Learn How to Dive!”
+        if (tutorialText != null)
+            tutorialText.text = "Let's Learn How to Dive!";
+        yield return new WaitForSeconds(2f);
+
+        // 2) Instructions
+        if (tutorialText != null)
+            tutorialText.text = "When the countdown displays \"Start!\", press the RIGHT ARROW KEY";
+        yield return new WaitForSeconds(5f);
+
+        // 3) “Good Luck!”
+        if (tutorialText != null)
+            tutorialText.text = "Good Luck!";
+        yield return new WaitForSeconds(2f);
+
+        // Clear text
+        if (tutorialText != null)
+            tutorialText.text = "";
+
+        // Start standard countdown
         StartCountdown();
     }
 
+    // -----------------------------------------------------------
+    // NORMAL COUNTDOWN
+    // -----------------------------------------------------------
     private void StartCountdown()
     {
         if (countdownRoutine != null)
@@ -48,11 +101,12 @@ public class RaceStartManager : MonoBehaviour
         raceStarted = false;
         player.enabled = false;
 
+        // Hide rhythm bar for tutorial AND normal countdown
         if (rhythmBar != null)
             rhythmBar.SetActive(false);
 
         if (raceTimerText != null)
-            raceTimerText.text = "00.00"; // reset timer display
+            raceTimerText.text = "00.00";
 
         countdownText.text = "";
         yield return new WaitForSeconds(preDelay);
@@ -63,12 +117,10 @@ public class RaceStartManager : MonoBehaviour
             yield return new WaitForSeconds(countInterval);
         }
 
-        // Show START! and allow diving
         countdownText.text = "START!";
         canDive = true;
         isCountdownRunning = false;
 
-        // 🕒 Start the race timer RIGHT HERE
         raceStartTime = Time.time;
         raceTimerRunning = true;
 
@@ -76,28 +128,34 @@ public class RaceStartManager : MonoBehaviour
         countdownText.text = "";
     }
 
+    // -----------------------------------------------------------
+    // UPDATE LOOP
+    // -----------------------------------------------------------
     void Update()
     {
-        // 🕒 Update timer display while race is active
+        // Timer
         if (raceTimerRunning && raceTimerText != null)
         {
             float elapsed = Time.time - raceStartTime;
             raceTimerText.text = $"{elapsed:F2}";
         }
 
-        // FALSE START (only if countdown still running)
+        // FALSE START
         if (isCountdownRunning && Input.GetKeyDown(KeyCode.RightArrow))
         {
             StartCoroutine(HandleFalseStart());
         }
 
-        // NORMAL START
+        // NORMAL DIVE
         if (canDive && !raceStarted && Input.GetKeyDown(KeyCode.RightArrow))
         {
             StartCoroutine(HandleDiveStart());
         }
     }
 
+    // -----------------------------------------------------------
+    // FALSE START
+    // -----------------------------------------------------------
     private IEnumerator HandleFalseStart()
     {
         if (countdownRoutine != null)
@@ -108,7 +166,6 @@ public class RaceStartManager : MonoBehaviour
         raceStarted = false;
 
         countdownText.text = "FALSE START!";
-        Debug.Log("False Start!");
 
         yield return new WaitForSeconds(falseStartPenalty);
 
@@ -116,17 +173,21 @@ public class RaceStartManager : MonoBehaviour
         StartCountdown();
     }
 
+    // -----------------------------------------------------------
+    // DIVE START
+    // -----------------------------------------------------------
     private IEnumerator HandleDiveStart()
     {
         canDive = false;
         raceStarted = true;
         isCountdownRunning = false;
 
-        // Small dive animation
+        // Dive animation
         Vector3 startPos = player.transform.position;
         Vector3 endPos = startPos + new Vector3(1f, -0.2f, 0f);
         float t = 0f;
         float duration = 0.3f;
+
         while (t < duration)
         {
             t += Time.deltaTime;
@@ -134,16 +195,31 @@ public class RaceStartManager : MonoBehaviour
             yield return null;
         }
 
-        // Enable movement
         player.enabled = true;
 
-        // Enable rhythm bar and reset to empty
+        // ======================================================
+        // TUTORIAL MODE BEHAVIOR
+        // NO RHYTHM
+        // NO UNDERWATER KICKS
+        // JUST GLIDE FORWARD
+        // ======================================================
+        if (tutorialMode)
+        {
+            player.SetSpeed(3f); // simple glide to finish
+            yield break; // skip the rest
+        }
+
+        // ======================================================
+        // NORMAL LEVEL BEHAVIOR
+        // ======================================================
+
+        // Rhythm bar appears only in normal mode
         if (rhythmBar != null)
         {
             rhythmBar.SetActive(true);
             yield return null;
 
-            var slider = rhythmBar.GetComponent<UnityEngine.UI.Slider>();
+            var slider = rhythmBar.GetComponent<Slider>();
             if (slider != null)
             {
                 slider.minValue = 0f;
@@ -151,25 +227,19 @@ public class RaceStartManager : MonoBehaviour
                 slider.value = 0f;
                 slider.normalizedValue = 0f;
             }
-            else
-            {
-                Debug.LogWarning("RhythmBar does not have a Slider component!");
-            }
         }
 
-        // Give the player initial dive speed
+        // Initial dive speed
         player.SetSpeed(2f);
 
-        // Reset rhythm timer so bar starts empty
+        // Rhythm + underwater mechanics
         player.ResetRhythmTimer();
-
-        // Underwater kick phase for 2 seconds
         player.StartUnderwaterKickPhase(2f);
-
-        Debug.Log("Dive Start + Underwater Kicks!");
     }
 
-    // 🏁 Call this from PlayerMovement when finish line is crossed
+    // -----------------------------------------------------------
+    // FINISH LINE
+    // -----------------------------------------------------------
     public void StopRaceTimer()
     {
         if (raceTimerRunning)
@@ -181,8 +251,6 @@ public class RaceStartManager : MonoBehaviour
             {
                 raceTimerText.text = $"Final Time: {finalTime:F2}s";
             }
-
-            Debug.Log($"Race finished! Final time: {finalTime:F2}s");
         }
     }
 }
