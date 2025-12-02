@@ -468,8 +468,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000011444, y: 294}
-  m_SizeDelta: {x: 995.05, y: 89.095}
+  m_AnchoredPosition: {x: -0.000030518, y: 178}
+  m_SizeDelta: {x: 1266.3875, y: 285.55}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &424690266
 GameObject:
@@ -780,6 +780,62 @@ MonoBehaviour:
   target: {fileID: 1231453587}
   smoothSpeed: 0.125
   offset: {x: 2, y: 0, z: 0}
+--- !u!1 &704612079
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 704612081}
+  - component: {fileID: 704612080}
+  m_Layer: 0
+  m_Name: DashTutorialManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &704612080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 704612079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6a50eebb2712e74195efaeeb328af3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DashTutorialManager
+  player: {fileID: 1231453583}
+  countdownText: {fileID: 1518833445}
+  tutorialText: {fileID: 401909152}
+  rhythmBar: {fileID: 1840029069}
+  preDelay: 1
+  countInterval: 1
+  falseStartPenalty: 2
+  diveAnimDistanceX: 1
+  diveAnimDepth: -0.2
+  diveAnimDuration: 0.25
+  dashDuration: 2
+  tutorialGlideSpeed: 3
+--- !u!4 &704612081
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 704612079}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.09258, y: -0.09837, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &813301268
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,7 +860,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813301268}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1de041846c36a643b1fdf0fa104f80e, type: 3}
   m_Name: 
@@ -1463,7 +1519,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -2240,7 +2296,7 @@ Transform:
   m_GameObject: {fileID: 2119780544}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6, y: 0.639, z: 0}
+  m_LocalPosition: {x: 5, y: 0.639, z: 0}
   m_LocalScale: {x: 0.148, y: 17.424448, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2258,3 +2314,4 @@ SceneRoots:
   - {fileID: 1863979480}
   - {fileID: 2119780547}
   - {fileID: 544682513}
+  - {fileID: 704612081}
