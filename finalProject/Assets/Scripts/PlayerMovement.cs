@@ -252,4 +252,6 @@ public class PlayerMovement : MonoBehaviour
     public float GetLastKeyTime() => lastKeyTime;
     public void SetSpeed(float newSpeed) => currentSpeed = Mathf.Clamp(newSpeed, 0f, maxSpeed);
     public void ResetRhythmTimer() => lastKeyTime = Time.time;
+
+    
 }

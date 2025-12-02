@@ -48,10 +48,10 @@ public class DashTutorialManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         tutorialText.text = "Let's Learn how to Dash!";
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.2f);
 
         tutorialText.text = "Right after the dive, you must spam the SPACE BAR for 2 SECONDS to move forward!";
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(5f);
 
         tutorialText.text = "Good Luck!";
         yield return new WaitForSeconds(1.5f);
