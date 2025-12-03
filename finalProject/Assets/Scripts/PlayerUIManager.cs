@@ -5,7 +5,7 @@ using TMPro;
 public class PlayerUIManager : MonoBehaviour
 {
     [Header("References")]
-    public PlayerMovement player; // drag your player here
+    public PlayerMovement player;
     public Slider rhythmBar;
     public Image rhythmFill;
     public TextMeshProUGUI speedText;
@@ -16,14 +16,9 @@ public class PlayerUIManager : MonoBehaviour
     public Color badTimingColor = Color.red;
 
     private float lastKeyTime;
-    private float minRhythmTime;
-    private float maxRhythmTime;
 
     void Start()
     {
-        // Get values from player script
-        minRhythmTime = player.minRhythmTime;
-        maxRhythmTime = player.maxRhythmTime;
         lastKeyTime = Time.time;
 
         if (rhythmBar)
@@ -36,10 +31,14 @@ public class PlayerUIManager : MonoBehaviour
     {
         // --- Rhythm Bar Update ---
         float elapsed = Time.time - player.GetLastKeyTime();
+
+        // Use LIVE rhythm timing from the player, not cached values
+        float minRhythmTime = player.minRhythmTime;
+        float maxRhythmTime = player.maxRhythmTime;
+
         float normalized = Mathf.Clamp01(elapsed / maxRhythmTime);
         rhythmBar.value = normalized;
 
-        // Set color based on current rhythm window
         if (elapsed >= minRhythmTime && elapsed <= maxRhythmTime)
             rhythmFill.color = goodTimingColor;
         else

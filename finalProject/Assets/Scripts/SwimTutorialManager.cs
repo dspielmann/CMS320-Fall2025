@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class SwimTutorialManager : MonoBehaviour
 {
+
     [Header("References")]
     public PlayerMovement player;
     public TextMeshProUGUI countdownText;
@@ -35,12 +36,19 @@ public class SwimTutorialManager : MonoBehaviour
     private float origGoodBoost, origBadPenalty;
     private bool origTutorialMode;
 
+    // Backup original rhythm window (added)
+    private float origMinRhythm, origMaxRhythm;
+
     void Start()
     {
         // Backup player settings
         origGoodBoost = player.goodRhythmBoost;
         origBadPenalty = player.badRhythmPenalty;
         origTutorialMode = player.tutorialMode;
+
+        // Backup rhythm timing window (added)
+        origMinRhythm = player.minRhythmTime;
+        origMaxRhythm = player.maxRhythmTime;
 
         if (rhythmBar != null)
             rhythmBar.SetActive(false);
@@ -204,7 +212,9 @@ public class SwimTutorialManager : MonoBehaviour
         tutorialText.text = "Tap LEFT / RIGHT to swim!";
         player.SetSpeed(swimStartSpeed);
 
-        // The tutorial now continues until the FINISH trigger is hit
+        // ★ Apply easier tutorial-only rhythm window
+        player.minRhythmTime = 0.5f;
+        player.maxRhythmTime = 5f;
     }
 
     private void OnDestroy()
@@ -213,5 +223,9 @@ public class SwimTutorialManager : MonoBehaviour
         player.goodRhythmBoost = origGoodBoost;
         player.badRhythmPenalty = origBadPenalty;
         player.tutorialMode = origTutorialMode;
+
+        // Restore rhythm timings
+        player.minRhythmTime = origMinRhythm;
+        player.maxRhythmTime = origMaxRhythm;
     }
 }
