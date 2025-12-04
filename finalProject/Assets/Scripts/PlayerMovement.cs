@@ -12,8 +12,8 @@ public class PlayerMovement : MonoBehaviour
     public float slowDecay = 2f;
 
     [Header("Rhythm Settings")]
-    public float minRhythmTime = 0.75f;
-    public float maxRhythmTime = 1.25f;
+    public float minRhythmTime = 0.5f;
+    public float maxRhythmTime = 2.5f;
 
     [Header("Dive Settings")]
     public float diveDuration = 1.5f;

@@ -10,7 +10,7 @@ public class SwimTutorialManager : MonoBehaviour
     public PlayerMovement player;
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI tutorialText;
-    public GameObject rhythmBar;
+    public GameObject rhythmCircle;
 
     [Header("Countdown Settings")]
     public float preDelay = 1f;
@@ -50,8 +50,8 @@ public class SwimTutorialManager : MonoBehaviour
         origMinRhythm = player.minRhythmTime;
         origMaxRhythm = player.maxRhythmTime;
 
-        if (rhythmBar != null)
-            rhythmBar.SetActive(false);
+        if (rhythmCircle != null)
+            rhythmCircle.SetActive(false);
 
         // Start the intro tutorial sequence
         StartCoroutine(TutorialIntro());
@@ -197,8 +197,8 @@ public class SwimTutorialManager : MonoBehaviour
         player.tutorialMode = false;
 
         // Enable rhythm bar
-        if (rhythmBar != null)
-            rhythmBar.SetActive(true);
+        if (rhythmCircle != null)
+            rhythmCircle.SetActive(true);
 
         // Swim phase begins — ends only on Finish trigger
         StartSwimPhase();

@@ -6,55 +6,29 @@ public class PlayerUIManager : MonoBehaviour
 {
     [Header("References")]
     public PlayerMovement player;
-    public Slider rhythmBar;
-    public Image rhythmFill;
+    public Image rhythmCircle;     // NEW — CIRCLE ONLY
     public TextMeshProUGUI speedText;
 
     [Header("Colors")]
     public Color normalColor = Color.red;
-    public Color goodTimingColor = Color.green;
-    public Color badTimingColor = Color.red;
-
-    private float lastKeyTime;
-
-    void Start()
-    {
-        lastKeyTime = Time.time;
-
-        if (rhythmBar)
-        {
-            rhythmBar.value = 0;
-        }
-    }
+    public Color goodColor = Color.green;
 
     void Update()
     {
-        // --- Rhythm Bar Update ---
         float elapsed = Time.time - player.GetLastKeyTime();
 
-        // Use LIVE rhythm timing from the player, not cached values
-        float minRhythmTime = player.minRhythmTime;
-        float maxRhythmTime = player.maxRhythmTime;
+        // Rhythm window from player
+        float minTime = player.minRhythmTime;
+        float maxTime = player.maxRhythmTime;
 
-        float normalized = Mathf.Clamp01(elapsed / maxRhythmTime);
-        rhythmBar.value = normalized;
-
-        if (elapsed >= minRhythmTime && elapsed <= maxRhythmTime)
-            rhythmFill.color = goodTimingColor;
+        // COLOR CHANGE ONLY
+        if (elapsed >= minTime && elapsed <= maxTime)
+            rhythmCircle.color = goodColor;
         else
-            rhythmFill.color = normalColor;
+            rhythmCircle.color = normalColor;
 
-        // --- Speed Text Update ---
+        // Speed text
         float speed = player.GetCurrentSpeed();
         speedText.text = $"Speed: {speed:F1} m/s";
-
-        if (Mathf.Approximately(speed, player.maxSpeed))
-        {
-            speedText.color = Color.yellow;
-        }
-        else
-        {
-            speedText.color = Color.white;
-        }
     }
 }

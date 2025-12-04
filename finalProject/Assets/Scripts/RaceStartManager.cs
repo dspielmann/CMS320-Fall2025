@@ -9,7 +9,7 @@ public class RaceStartManager : MonoBehaviour
     public PlayerMovement player;
     public TextMeshProUGUI countdownText;
     public GameObject divingBlock;
-    public GameObject rhythmBar;
+    public GameObject rhythmCircle;
 
     [Header("Timer UI")]
     public TextMeshProUGUI raceTimerText;
@@ -57,8 +57,8 @@ public class RaceStartManager : MonoBehaviour
         if (raceTimerText != null) raceTimerText.text = "00.00";
 
         // Hide rhythm bar during tutorial
-        if (rhythmBar != null)
-            rhythmBar.SetActive(false);
+        if (rhythmCircle != null)
+            rhythmCircle.SetActive(false);
 
         // 1) “Let's Learn How to Dive!”
         if (tutorialText != null)
@@ -102,8 +102,8 @@ public class RaceStartManager : MonoBehaviour
         player.enabled = false;
 
         // Hide rhythm bar for tutorial AND normal countdown
-        if (rhythmBar != null)
-            rhythmBar.SetActive(false);
+        if (rhythmCircle != null)
+            rhythmCircle.SetActive(false);
 
         if (raceTimerText != null)
             raceTimerText.text = "00.00";
@@ -214,12 +214,12 @@ public class RaceStartManager : MonoBehaviour
         // ======================================================
 
         // Rhythm bar appears only in normal mode
-        if (rhythmBar != null)
+        if (rhythmCircle != null)
         {
-            rhythmBar.SetActive(true);
+            rhythmCircle.SetActive(true);
             yield return null;
 
-            var slider = rhythmBar.GetComponent<Slider>();
+            var slider = rhythmCircle.GetComponent<Slider>();
             if (slider != null)
             {
                 slider.minValue = 0f;

@@ -8,7 +8,7 @@ public class DashTutorialManager : MonoBehaviour
     public PlayerMovement player;               // Reference to PlayerMovement script
     public TextMeshProUGUI countdownText;       // The numeric countdown UI
     public TextMeshProUGUI tutorialText;        // The text messages UI
-    public GameObject rhythmBar;                // The rhythm bar (disabled during tutorial)
+    public GameObject rhythmCircle;                // The rhythm bar (disabled during tutorial)
 
     [Header("Countdown Settings")]
     public float preDelay = 1f;
@@ -32,8 +32,8 @@ public class DashTutorialManager : MonoBehaviour
 
     void Start()
     {
-        if (rhythmBar != null)
-            rhythmBar.SetActive(false);
+        if (rhythmCircle != null)
+            rhythmCircle.SetActive(false);
 
         // Start the special tutorial text sequence
         StartCoroutine(TutorialIntroSequence());
