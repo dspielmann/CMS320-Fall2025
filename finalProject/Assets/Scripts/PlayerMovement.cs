@@ -8,6 +8,10 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
 
     [Header("Speed Settings")]
+    [Header("Next Level Settings")]
+    public string nextSceneName;         // Set this in Inspector
+    public GameObject nextLevelButton;   // Drag the NextLevelButton here in Inspector
+    public NextLevelButtonHandler nextLevelButtonHandler;
     public float baseSpeed = 0f;
     public float goodRhythmBoost = 1.2f;
     public float badRhythmPenalty = 0.6f;
@@ -56,6 +60,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (underwaterTimerText != null)
             underwaterTimerText.gameObject.SetActive(false);
+        if (nextLevelButton != null)
+            nextLevelButton.SetActive(false); // hide at start
     }
 
     void Start()
@@ -204,9 +210,25 @@ public class PlayerMovement : MonoBehaviour
             {
                 raceManager.StopRaceTimer();
             }
+            // Show Next Level Button
+            if (nextLevelButtonHandler != null)
+            {
+                nextLevelButtonHandler.ShowButton();
+            }
+            else
+            {
+                Debug.LogWarning("NextLevelButtonHandler not found. Cannot show Next Level button.");
+            }
+            if (nextLevelButtonHandler != null)
+            {
+                nextLevelButtonHandler.ShowButton();
+            }
+            else
+            {
+                Debug.LogWarning("NextLevelButtonHandler not assigned in PlayerMovement!");
+            }
         }
     }
-
     // ------------------------------
     // UNDERWATER KICK PHASE
     // ------------------------------

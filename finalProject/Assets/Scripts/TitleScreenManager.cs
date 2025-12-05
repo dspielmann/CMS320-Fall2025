@@ -21,7 +21,7 @@ public class TitleScreenManager : MonoBehaviour
     public void PlayGame()
     {
         Debug.Log("Play button clicked!");
-        SceneManager.LoadScene("PlayerSelection");
+        SceneManager.LoadScene("Story");
     }
 
     public void QuitGame()

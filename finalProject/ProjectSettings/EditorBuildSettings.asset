@@ -8,15 +8,36 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/startScreen.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/PlayerSelection.unity
     guid: 67c7a63ebc095664dbf0cdbaf956cf86
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Instructions.unity
     guid: b85703356b695894cb3c5a26c288cde1
   - enabled: 1
     path: Assets/Scenes/Level1.unity
     guid: 4c04e9e0d9b46024480fe5bb010c40e8
+  - enabled: 1
+    path: Assets/Scenes/Story.unity
+    guid: 52b21b2aca25b7c45b739b106e02dae2
+  - enabled: 1
+    path: Assets/Scenes/DashTutorial.unity
+    guid: b8c3e6af2f447e84ea86e7dda87fcd41
+  - enabled: 1
+    path: Assets/Scenes/DiveTutorial.unity
+    guid: ecc59d6cdc3919a4bbdda718b8ae586b
+  - enabled: 1
+    path: Assets/Scenes/Level2.unity
+    guid: 7f697387c561a1843a09fab537597515
+  - enabled: 1
+    path: Assets/Scenes/SwimTutorial.unity
+    guid: de77c109f4c797846b29750b11f54829
+  - enabled: 1
+    path: Assets/Scenes/ObstacleTutorial.unity
+    guid: e26d24adeb3adb34391d46bea6d08ca9
+  - enabled: 1
+    path: Assets/Scenes/Level3.unity
+    guid: 6b1d3f02a251c754ba4cc7ba84aafeb3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

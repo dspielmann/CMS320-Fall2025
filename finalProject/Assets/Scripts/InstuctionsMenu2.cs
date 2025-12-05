@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class InstructionsMenu : MonoBehaviour
+public class InstuctionsMenu2 : MonoBehaviour
 {
     [Header("Buttons")]
     public Button startButton;
@@ -23,6 +23,6 @@ public class InstructionsMenu : MonoBehaviour
     public void StartGame()
     {
         Debug.Log("Starting Story");
-        SceneManager.LoadScene("DiveTutorial");
+        SceneManager.LoadScene("Level1");
     }
 }

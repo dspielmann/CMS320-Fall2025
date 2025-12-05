@@ -7,6 +7,7 @@ public class SwimTutorialManager : MonoBehaviour
 {
 
     [Header("References")]
+    public Animator animator;
     public PlayerMovement player;
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI tutorialText;
@@ -126,6 +127,7 @@ public class SwimTutorialManager : MonoBehaviour
         // Start dive if allowed
         if (canStart && Input.GetKeyDown(KeyCode.RightArrow))
         {
+            animator.SetBool("isDiving", true);
             StartCoroutine(DiveStart());
         }
     }

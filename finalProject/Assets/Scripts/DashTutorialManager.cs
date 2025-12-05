@@ -4,6 +4,9 @@ using TMPro;
 
 public class DashTutorialManager : MonoBehaviour
 {
+    [Header("Animation")]
+    public Animator animator;
+
     [Header("References")]
     public PlayerMovement player;               // Reference to PlayerMovement script
     public TextMeshProUGUI countdownText;       // The numeric countdown UI
@@ -107,6 +110,7 @@ public class DashTutorialManager : MonoBehaviour
         // Correct dive input
         if (canDive && Input.GetKeyDown(KeyCode.RightArrow))
         {
+            animator.SetBool("isDiving", true);
             StartCoroutine(HandleDiveStart());
         }
     }
@@ -177,6 +181,6 @@ public class DashTutorialManager : MonoBehaviour
         // Speed after dash
         player.SetSpeed(tutorialGlideSpeed);
 
-        tutorialText.text = "Nice! Dash complete.";
+        tutorialText.text = "";
     }
 }
