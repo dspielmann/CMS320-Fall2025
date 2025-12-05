@@ -4,6 +4,9 @@ using TMPro;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    public Animator animator;
+
     [Header("Speed Settings")]
     public float baseSpeed = 0f;
     public float goodRhythmBoost = 1.2f;
@@ -128,6 +131,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
+            animator.SetBool("isDiving", false);
+            animator.SetBool("isSwimming", true);
             KeyCode currentKey = Input.GetKeyDown(KeyCode.LeftArrow) ? KeyCode.LeftArrow : KeyCode.RightArrow;
             float timeSinceLast = Time.time - lastKeyTime;
 

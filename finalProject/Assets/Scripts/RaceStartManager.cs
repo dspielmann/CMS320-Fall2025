@@ -6,6 +6,8 @@ using System.Collections;
 public class RaceStartManager : MonoBehaviour
 {
     [Header("References")]
+
+    public Animator animator;
     public PlayerMovement player;
     public TextMeshProUGUI countdownText;
     public GameObject divingBlock;
@@ -149,6 +151,7 @@ public class RaceStartManager : MonoBehaviour
         // NORMAL DIVE
         if (canDive && !raceStarted && Input.GetKeyDown(KeyCode.RightArrow))
         {
+            animator.SetBool("isDiving", true);
             StartCoroutine(HandleDiveStart());
         }
     }
